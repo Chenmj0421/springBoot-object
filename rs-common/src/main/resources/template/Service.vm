@@ -1,0 +1,15 @@
+package ${package_name}.rpc.api;
+
+import com.rs.common.base.RsBaseService;
+import ${package_name}.dao.model.${model};
+import ${package_name}.dao.model.${model}Example;
+
+/**
+*
+* ${model}Service接口
+* @author liegou
+* @date ${ctime}.
+*/
+public interface ${model}Service extends RsBaseService<${model}, ${model}Example> {
+
+}

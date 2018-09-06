@@ -1,0 +1,123 @@
+package ${package_name}.admin.controller.manage;
+
+import com.rs.common.base.BaseResult;
+import ${package_name}.dao.model.${model};
+import ${package_name}.dao.model.${model}Example;
+import ${package_name}.rpc.api.${model}Service;
+import com.reger.dubbo.annotation.Inject;
+import com.rs.common.base.BaseController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * ${model}controller
+ * @author liegou
+ * @date ${ctime}.
+ */
+@Controller
+@RequestMapping("/manage/${mapper}")
+@Api(value = "${model}管理", description = "${model}管理")
+public class ${model}Controller extends BaseController {
+
+    private static Logger log = LoggerFactory.getLogger(${model}Controller.class);
+
+    @Inject
+    private ${model}Service ${mapper}Service;
+
+
+    @ApiOperation(value = "列表")
+    @RequiresPermissions("${permission}:read")
+    @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "query",name = "offset", value = "当前页数，默认 0", required = true, dataType = "Integer"),
+    @ApiImplicitParam(paramType = "query",name = "limit", value = "每页限制数据条数，默认10", required = true, dataType = "Integer"),
+    @ApiImplicitParam(paramType = "query",name = "sort", value = "排序字段", required = true, dataType = "String"),
+    @ApiImplicitParam(paramType = "query",name = "order", value = "排序方式:降序 DESC 升序 ASC", required = true, dataType = "String")
+    })
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @ResponseBody
+    public Object list(
+            @RequestParam(required = false, defaultValue = "0", value = "offset") int offset,
+            @RequestParam(required = false, defaultValue = "10", value = "limit") int limit,
+            @RequestParam(required = false, value = "sort") String sort,
+            @RequestParam(required = false, value = "order") String order) {
+        ${model}Example ${mapper}Example = new ${model}Example();
+        if (!StringUtils.isBlank(sort) && !StringUtils.isBlank(order)) {
+            ${mapper}Example.setOrderByClause(sort + " " + order);
+        }
+        long total = ${mapper}Service.countByExample(${mapper}Example);
+        Map<String, Object> result = new HashMap<>(16);
+        if (total == 0) {
+           result.put("rows", new ArrayList());
+           result.put("total", total);
+           return result;
+        }
+        List<${model}> rows = ${mapper}Service.selectByExampleForOffsetPage(${mapper}Example, offset, limit);
+        result.put("rows", rows);
+        result.put("total", total);
+        return result;
+    }
+
+        @ApiOperation(value = "新增")
+        @RequiresPermissions("${permission}:create")
+        @RequestMapping(value = "/create", method = RequestMethod.POST)
+        @ResponseBody
+        public Object create(@ModelAttribute ${model} ${mapper}) {
+            int count = ${mapper}Service.insertSelective(${mapper});
+            return BaseResult.newSuccess();
+        }
+
+        @ApiOperation(value = "删除")
+        @RequiresPermissions("${permission}:delete")
+        @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "path",name = "ids", value = "批量删除数据的主键，以‘,’逗号隔开", required = true, dataType = "String")
+        })
+        @RequestMapping(value = "/delete/{ids}",method = RequestMethod.GET)
+        @ResponseBody
+        public Object delete(@PathVariable("ids") String ids) {
+            int count = ${mapper}Service.deleteByPrimaryKeys(ids);
+            return BaseResult.newSuccess();
+        }
+
+        @ApiOperation(value = "修改")
+        @RequiresPermissions("${permission}:update")
+        @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "path",name = "id", value = "主键", required = true, dataType = "String")
+        })
+        @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+        @ResponseBody
+        public Object update(@PathVariable("id") String id, @ModelAttribute ${model} ${mapper}) {
+            int count = ${mapper}Service.updateByPrimaryKeySelective(${mapper});
+            return BaseResult.newSuccess();
+        }
+        @ApiOperation(value = "查看")
+        @RequiresPermissions("${permission}:info")
+        @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "path",name = "id", value = "主键", required = true, dataType = "String")
+        })
+        @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
+        @ResponseBody
+        public Object info(@PathVariable("id") String id, ModelMap modelMap) {
+            ${model} ${mapper} = ${mapper}Service.selectByPrimaryKey(id);
+            modelMap.put("${mapper}", ${mapper});
+            return BaseResult.newSuccess(modelMap);
+        }
+
+
+
+
+
+}

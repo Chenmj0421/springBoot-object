@@ -1,0 +1,33 @@
+-- 菜单SQL
+set @uid = UUID();
+insert into upms_permission (permission_id,system_id, pid,
+name, type, permission_value,
+uri, icon, status,
+ctime, orders)
+values (@uid,'请修改为对应的系统id',null,'请修改为菜单名称',2,null,null,'fa fa-bank',2,now(),'0');
+
+-- 菜单对应按钮SQL
+insert into upms_permission (permission_id,system_id, pid,
+name, type, permission_value,
+uri, icon, status,
+ctime, orders)
+values
+(uuid(),'请修改为对应的系统id',@uid,'查看',3,'${permission}:info','/manage/${mapper}/info/','fa fa-bank',3,now(),'0');
+insert into upms_permission (permission_id,system_id, pid,
+name, type, permission_value,
+uri, icon, status,
+ctime, orders)
+values
+(uuid(),'请修改为对应的系统id',@uid,'新增',3,'${permission}:create','/manage/${mapper}/create','fa fa-bank',3,now(),'0');
+insert into upms_permission (permission_id,system_id, pid,
+name, type, permission_value,
+uri, icon, status,
+ctime, orders)
+values
+(uuid(),'请修改为对应的系统id',@uid,'修改',3,'${permission}:update','/manage/${mapper}/update/)','fa fa-bank',3,now(),'0');
+insert into upms_permission (permission_id,system_id, pid,
+name, type, permission_value,
+uri, icon, status,
+ctime, orders)
+values
+(uuid(),'请修改为对应的系统id',@uid,'删除',3,'${permission}:delete','/manage/${mapper}/delete/)','fa fa-bank',3,now(),'0');
